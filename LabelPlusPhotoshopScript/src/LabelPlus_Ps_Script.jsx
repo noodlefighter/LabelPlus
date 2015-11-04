@@ -446,9 +446,9 @@ LabelPlusInput.prototype.createPanel = function(pnl, ini) {
   
     // 执行动作GroupN
     if (ini.runActionGroup){
-      pnl.runActionGroupList.enabled = true;      
-      pnl.runActionGroupList.selection = ini.runActionGroup;  
       pnl.runActionGroupCheckBox.value = true;
+      pnl.runActionGroupList.enabled = true;      
+      pnl.runActionGroupList.selection.text = ini.runActionGroup;  
     }  
   
     // 导入后不关闭文档
@@ -749,6 +749,14 @@ LabelPlusInput.prototype.process = function(opts, doc) {
     
     var layerGroups = new Array();
     
+    // 文件打开时执行一次动作"_start"
+    if(opts.runActionGroup) {
+      bg.activeLayer = bg.layers[bg.layers.length-1];
+      try{
+        app.doAction("_start" , opts.runActionGroup);
+      }
+      catch(e){ }
+    }            
     
     // 遍历LabelData
     for(var j=0; j<labelData.length; j++){
@@ -821,7 +829,16 @@ LabelPlusInput.prototype.process = function(opts, doc) {
           }
         }        
     }
-
+    
+    // 文件关闭时执行一次动作"_end"
+    if(opts.runActionGroup) {
+      bg.activeLayer = bg.layers[bg.layers.length-1];
+      try{
+        app.doAction("_end" , opts.runActionGroup);
+      }
+      catch(e){ }
+    }        
+    
     // 保存文件
     var fileOut = new File(opts.target + "//" + filename);
     var options = PhotoshopSaveOptions;
