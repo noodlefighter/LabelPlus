@@ -508,8 +508,11 @@ namespace LabelPlus
                                         .ToArray()
                                         );
                                     int idx = int.Parse(idx_t);
-                                    tlist[i].Text = tlist[idx - 1].Text;
-                                    changed = true;
+                                    if (i != idx - 1)
+                                    {
+                                        tlist[i].Text = tlist[idx - 1].Text;
+                                        changed = true;
+                                    }
                                 }
                                 catch { }
                             }
