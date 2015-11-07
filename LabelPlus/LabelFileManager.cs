@@ -482,39 +482,79 @@ namespace LabelPlus
             }
         }
 
+        void replaceText()
+        {
+            try
+            {
+                foreach (var file in store.Keys)
+                {
+                    var tlist = store[file];
+
+                    bool changed;
+                    do
+                    {
+                        changed = false;
+                        for (int i = 0; i < tlist.Count; ++i)
+                        {
+                            if (Regex.IsMatch(tlist[i].Text, @"=|＝"))
+                            {
+                                try
+                                {
+                                    var idx_raw = tlist[i].Text.Substring(1);
+                                    string idx_t = string.Concat(
+                                        idx_raw
+                                        .ToCharArray()
+                                        .Select(x => { if (x >= '０' && x <= '９') x ^= '\xFF20'; return x + ""; })
+                                        .ToArray()
+                                        );
+                                    int idx = int.Parse(idx_t);
+                                    tlist[i].Text = tlist[idx - 1].Text;
+                                    changed = true;
+                                }
+                                catch { }
+                            }
+                        }
+                    } while (changed == true);
+
+                    store[file] = tlist;
+                }
+            }
+            catch { }
+        }
+
         public bool ToFile(string path)
         {
             try
             {
-                FileStream fs = new FileStream(path, FileMode.Create);
-                StreamWriter sr = new StreamWriter(fs, Encoding.Unicode);
+                replaceText();
 
-                var filenames = store.Keys;
+                var sb = new StringBuilder();
+                sb.AppendLine(getLabelFileStartBlocksString());
 
-                sr.WriteLine(getLabelFileStartBlocksString());
-
-                foreach (var name in filenames)
+                foreach (var file in store.Keys)
                 {
                     int count = 0;
-                    List<LabelItem> items = store[name];
+                    List<LabelItem> items = store[file];
 
-                    sr.WriteLine();
-                    sr.WriteLine(">>>>>>>>[" + name + "]<<<<<<<<");
+                    sb.AppendLine();
+                    sb.AppendLine(">>>>>>>>[" + file + "]<<<<<<<<");
                     foreach (var n in items)
                     {
                         count++;
-                        sr.WriteLine("----------------[" + count.ToString() +
+                        sb.AppendLine("----------------[" + count.ToString() +
                             "]----------------[" +
                             n.X_percent.ToString("F3") + "," +
                             n.Y_percent.ToString("F3") + "," +
                             n.Category.ToString() +
                             "]");
-                        sr.WriteLine(n.Text);
-                        sr.WriteLine();
+                        sb.AppendLine(n.Text);
+                        sb.AppendLine();
                     }
                 }
-                sr.Close();
-                fs.Close();
+
+                var sr = new StreamWriter(path, false, Encoding.Unicode);
+                sr.Write(sb.ToString());
+                sr.Dispose();
 
                 return true;
             }
