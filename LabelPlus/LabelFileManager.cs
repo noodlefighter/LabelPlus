@@ -12,6 +12,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.IO;
+using System.Text.RegularExpressions;
 #endregion
 
 namespace LabelPlus
@@ -29,8 +30,8 @@ namespace LabelPlus
         const int FILEHEAD_LENGHT = 2;
 
         //
-        static readonly string[] FILEHEAD_DEFAULT = { 
-            MY_FILE_VER_FIRST.ToString(), 
+        static readonly string[] FILEHEAD_DEFAULT = {
+            MY_FILE_VER_FIRST.ToString(),
             MY_FILE_VER_LAST.ToString() };
 
         #endregion
@@ -60,12 +61,13 @@ namespace LabelPlus
         string comment; //用户注释
 
         //标签信息
-        Dictionary<string, List<LabelItem>> store;        
-        
+        Dictionary<string, List<LabelItem>> store;
+
         #endregion
 
         #region Constructors
-        public LabelFileManager(){
+        public LabelFileManager()
+        {
             fileHead = FILEHEAD_DEFAULT;
             groupStringList = new List<string>();
             comment = GlobalVar.DefaultComment;
@@ -93,7 +95,7 @@ namespace LabelPlus
         {
             if (LabelItemTextChanged != null) LabelItemTextChanged(this, new EventArgs());
         }
-        internal void OnGroupListChanged() 
+        internal void OnGroupListChanged()
         {
             if (GroupListChanged != null) GroupListChanged(this, new EventArgs());
         }
@@ -122,16 +124,20 @@ namespace LabelPlus
             }
         }
 
-        public List<string> GroupList { 
+        public List<string> GroupList
+        {
             get { return groupStringList; }
-            set {
+            set
+            {
                 groupStringList = value;
                 OnGroupListChanged();
             }
         }
-        public string Comment { 
+        public string Comment
+        {
             get { return comment; }
-            set {
+            set
+            {
                 comment = value;
             }
         }
@@ -146,7 +152,8 @@ namespace LabelPlus
         private void readLabelFileStartBlocks(string nowText)
         {
             //老版本 无start blocks 特殊处理
-            if (nowText.Trim() == "") { 
+            if (nowText.Trim() == "")
+            {
 
                 //block1
                 for (int i = 0; i < FILEHEAD_LENGHT; i++)
@@ -167,7 +174,7 @@ namespace LabelPlus
                         break;
                     }
                 }
-                
+
                 //block end
                 comment = GlobalVar.DefaultComment;
 
@@ -181,22 +188,24 @@ namespace LabelPlus
             string[] tmp;
             //区块1 文件头
             tmp = textBlocks[0].Split(',');
-            for (int i = 0; i < FILEHEAD_LENGHT; i++) {
-                if(i<tmp.Length)
+            for (int i = 0; i < FILEHEAD_LENGHT; i++)
+            {
+                if (i < tmp.Length)
                     fileHead[i] = tmp[i].Trim();               //实际值
                 else
                     fileHead[i] = FILEHEAD_DEFAULT[i];      //默认值
             }
-            
+
             //检查版本信息
             if (Convert.ToInt16(fileHead[0]) > MY_FILE_VER_FIRST)
                 throw new Exception(StringResources.GetValue("error_file_version_over"));
 
             //区块2 分组信息
             tmp = textBlocks[1].Trim().Split('\r');
-            foreach (string str in tmp) {
+            foreach (string str in tmp)
+            {
                 string t = str.Trim();
-                if(t!="")
+                if (t != "")
                     groupStringList.Add(t);
             }
 
@@ -212,7 +221,8 @@ namespace LabelPlus
             string result = "";
 
             //区块1 文件头
-            foreach (string str in fileHead) {
+            foreach (string str in fileHead)
+            {
                 result += str + ",";
             }
             result = result.Substring(0, result.Length - 1);    //去掉最后一个逗号
@@ -231,7 +241,8 @@ namespace LabelPlus
             return result;
         }
 
-        internal bool addFile(string file) {
+        internal bool addFile(string file)
+        {
             try
             {
                 store.Add(file, new List<LabelItem>());
@@ -239,7 +250,7 @@ namespace LabelPlus
             }
             catch { return false; }
         }
-        internal bool addLabelItem(string file, LabelItem item, int insertIndex = -1) 
+        internal bool addLabelItem(string file, LabelItem item, int insertIndex = -1)
         {
             try
             {
@@ -324,7 +335,7 @@ namespace LabelPlus
         //    catch { return false; }
         //}
 
-        public bool NewLabelFile(string[] groups) 
+        public bool NewLabelFile(string[] groups)
         {
             fileHead = FILEHEAD_DEFAULT;
             comment = GlobalVar.DefaultComment;
@@ -463,7 +474,7 @@ namespace LabelPlus
                 OnLabelItemListChanged();
                 OnGroupListChanged();
             }
-            catch(Exception e) 
+            catch (Exception e)
             {
                 throw new Exception("ReadFromFileError in line" + error_lineNum.ToString()
                     + "\r\n" + error_state
@@ -493,10 +504,10 @@ namespace LabelPlus
                     {
                         count++;
                         sr.WriteLine("----------------[" + count.ToString() +
-                            "]----------------[" + 
-                            n.X_percent.ToString("F3") + "," + 
+                            "]----------------[" +
+                            n.X_percent.ToString("F3") + "," +
                             n.Y_percent.ToString("F3") + "," +
-                            n.Category.ToString() + 
+                            n.Category.ToString() +
                             "]");
                         sr.WriteLine(n.Text);
                         sr.WriteLine();
@@ -513,32 +524,27 @@ namespace LabelPlus
         internal getStrlineTypeResult getStrlineType(string str)
         {
             str = str.Trim();
+            string ptrn_imgfn = @"^>+\[(?<img>.*)\]<+$";
+            string ptrn_line = @"^-+\[(?<idx>.*)\]-+(\[(?<x>[\d\.]*)\,(?<y>[\d\.]*)(\,(?<g>\d*))?\])?$";
 
             getStrlineTypeResult tmp = new getStrlineTypeResult();
-            if (str.StartsWith(">>>>>>>>[") && str.IndexOf("]<<<<<<<<") > 9)
+            if (Regex.IsMatch(str, ptrn_imgfn))
             {
                 tmp.type = strlineType.fileHead;
                 tmp.value = new string[1];
-                tmp.value[0] = str.Substring(9, str.IndexOf("]<<<<<<<<") - 9);
+
+                tmp.value[0] = Regex.Match(str, ptrn_imgfn).Groups["img"].Value;
             }
-            else if (str.StartsWith("----------------[") && str.IndexOf("]----------------") > 17)
+            else if (Regex.IsMatch(str, ptrn_line))
             {
                 tmp.type = strlineType.labelHead;
+                var g = Regex.Match(str, ptrn_line).Groups;
                 List<string> tmpList = new List<string>();
-                tmpList.Add(str.Substring(17, str.IndexOf("]----------------") - 17));
-                string rightText = str.Substring(str.IndexOf("]----------------") + 17);
-                if (rightText.StartsWith("[") && rightText.EndsWith("]"))
-                {
-                    rightText = rightText.Substring(1, rightText.Length - 2);
-                    string[] splitText = rightText.Split(',');
-                    foreach (string s in splitText) { tmpList.Add(s); }
-                }
-                else
-                {
-                    tmp.value = tmpList.ToArray();
-                    goto TheEnd;
-                }
-                tmp.value = tmpList.ToArray();
+                tmpList.Add(g["idx"].Value);
+                tmpList.Add(g["x"].Value);
+                tmpList.Add(g["y"].Value);
+                tmpList.Add(g["g"].Value);
+                tmp.value = tmpList.Where(x => !string.IsNullOrEmpty(x)).ToArray();
             }
             else
             {
@@ -546,27 +552,26 @@ namespace LabelPlus
                 tmp.value = new string[1];
                 tmp.value[0] = str;
             }
-
-        TheEnd:
             return tmp;
         }
 
-        internal void addLabelToStore(string nowText, 
-                                        string[] nowLabelResultValues, 
+        internal void addLabelToStore(string nowText,
+                                        string[] nowLabelResultValues,
                                         string nowFilename)
         {
             int category;
 
+
             //nowLabelResultValues的元素个数 判断是否存在
-            if (nowLabelResultValues.Length == 3) 
+            if (nowLabelResultValues.Length == 3)
             {
                 category = 1;
             }
-            else if(nowLabelResultValues.Length == 4)
+            else if (nowLabelResultValues.Length == 4)
             {
                 category = Convert.ToInt16(nowLabelResultValues[3]);
             }
-            else 
+            else
             {
                 return;     //解析失败
             }
