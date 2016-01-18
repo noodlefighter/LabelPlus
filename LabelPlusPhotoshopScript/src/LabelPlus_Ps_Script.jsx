@@ -102,7 +102,7 @@ LabelPlusInput.prototype.createPanel = function(pnl, ini) {
   pnl.lpTextFileBrowseButton.onClick = function() {
     try {
       var pnl = this.parent;
-      var fmask =  "LabelPlus Text: *.txt";
+      var fmask =  "*.txt;*.json";
       var f = File.openDialog(_MT_STRING_LABEL_TEXTFILE, fmask);
        
       if (f && f.exists) {

@@ -27,6 +27,17 @@ LabelPlusTextReader = function(path) {
   // 打开
   f.open("r");  
   
+  // json格式读取
+  if(path.substring(path.lastIndexOf("."), path.length) == '.json'){  
+    f.open("r", "TEXT", "????");
+    f.lineFeed = "unix";
+    f.encoding = 'UTF-8';    
+    var json = f.read();
+    var data = (new Function('return ' + json))();
+    f.close();
+    return data;
+  }
+  
   // 分行读取
   var state = 'start'; //'start','filehead','context'
   var notDealStr;
