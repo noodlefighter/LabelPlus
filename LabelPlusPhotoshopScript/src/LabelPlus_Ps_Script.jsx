@@ -11,6 +11,7 @@
 //@include "my_include.js" 
 //@include "my_action.js"
 //@include "labelplus_text_reader.js"
+//@include "get_internal_font_name.js"
 //
 
 // ======================================== Gobal Const 
