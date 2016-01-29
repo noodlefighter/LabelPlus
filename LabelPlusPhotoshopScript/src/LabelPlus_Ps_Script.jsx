@@ -11,6 +11,7 @@
 //@include "my_include.js" 
 //@include "my_action.js"
 //@include "labelplus_text_reader.js"
+//@include "get_internal_font_name.js"
 //
 
 // ======================================== Gobal Const 
@@ -714,7 +715,28 @@ LabelPlusInput.prototype.process = function(opts, doc) {
         app.doAction("_start" , opts.runActionGroup);
       }
       catch(e){ }
-    }            
+    }  
+        
+    // 涂白测试开始 {
+    //todo: 删除这个测试段
+    var labelArr = new Array();
+    
+    // 找出需要涂白的标签
+    for(var j=0; j<labelData.length; j++){
+        var labelX = labelData[j].LabelheadValue[0];
+        var labelY = labelData[j].LabelheadValue[1];
+        var labelXY = { x:labelX, y:labelY };        
+        var labelGroup = gourpData[labelData[j].LabelheadValue[2]];
+        
+        if(labelGroup == "框内"){
+            labelArr.push(labelXY);
+        }            
+    }
+    
+    //执行涂白
+    MyAction.lp_dialogClear(labelArr, bg.width, bg.height, 16, 1);        
+    
+    // 涂白测试结束 }
     
     // 遍历LabelData
     for(var j=0; j<labelData.length; j++){
@@ -737,8 +759,8 @@ LabelPlusInput.prototype.process = function(opts, doc) {
         if(opts.outputLabelNumber && !layerGroups["_Label"]){
           layerGroups["_Label"] = bg.layerSets.add();
           layerGroups["_Label"].name = "Label";
-        }
-      
+        }        
+        
         // 导出标号
         if(opts.outputLabelNumber){
           LabelPlusInput.newTextLayer(bg,
