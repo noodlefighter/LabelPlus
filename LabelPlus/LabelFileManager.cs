@@ -14,6 +14,7 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
+using OpenCCEntry;
 
 #endregion Using Directives
 
@@ -578,7 +579,15 @@ namespace LabelPlus
                 }
 
                 var sr = new StreamWriter(path, false, Encoding.UTF8);
-                sr.Write(sb.ToString());
+                var strToWrite = sb.ToString();
+                try
+                {
+                    var occ = new OpenCC("opencc/s2twp.json");
+                    strToWrite = occ.Convert(strToWrite);
+                }
+                catch { }
+
+                sr.Write(strToWrite);
                 sr.Dispose();
 
                 return true;

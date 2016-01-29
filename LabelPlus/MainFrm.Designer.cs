@@ -61,6 +61,7 @@
             this.toolStripButton_ZoomPlus = new System.Windows.Forms.ToolStripButton();
             this.toolStripButton_ZoomMinus = new System.Windows.Forms.ToolStripButton();
             this.toolStripComboBox_Zoom = new System.Windows.Forms.ToolStripComboBox();
+            this.picView = new LabelPlus.PicView();
             this.splitContainer1 = new System.Windows.Forms.SplitContainer();
             this.tableLayoutPanelLabels = new System.Windows.Forms.TableLayoutPanel();
             this.toolStripLabels = new System.Windows.Forms.ToolStrip();
@@ -83,7 +84,6 @@
             this.timerAutoSave = new System.Windows.Forms.Timer(this.components);
             this.folderBrowserDialog = new System.Windows.Forms.FolderBrowserDialog();
             this.notifyIcon = new System.Windows.Forms.NotifyIcon(this.components);
-            this.picView = new LabelPlus.PicView();
             this.menuStrip1.SuspendLayout();
             this.toolStrip.SuspendLayout();
             this.splitContainer.Panel1.SuspendLayout();
@@ -391,6 +391,18 @@
             this.toolStripComboBox_Zoom.Name = "toolStripComboBox_Zoom";
             this.toolStripComboBox_Zoom.Size = new System.Drawing.Size(60, 23);
             // 
+            // picView
+            // 
+            this.picView.AlwaysShowGroup = false;
+            this.picView.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.picView.EnableMakeImage = true;
+            this.picView.Location = new System.Drawing.Point(3, 3);
+            this.picView.Name = "picView";
+            this.picView.Size = new System.Drawing.Size(434, 407);
+            this.picView.TabIndex = 5;
+            this.picView.Zoom = 0.05F;
+            this.picView.PreviewKeyDown += new System.Windows.Forms.PreviewKeyDownEventHandler(this.picView_PreviewKeyDown);
+            // 
             // splitContainer1
             // 
             this.splitContainer1.BackColor = System.Drawing.SystemColors.Window;
@@ -499,6 +511,7 @@
             this.columnHeader2,
             this.columnHeader3});
             this.listView.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.listView.Font = new System.Drawing.Font("Noto Sans CJK SC Regular", 8.999999F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.listView.Location = new System.Drawing.Point(3, 30);
             this.listView.Name = "listView";
             this.listView.Size = new System.Drawing.Size(257, 225);
@@ -558,6 +571,7 @@
             // 
             this.TranslateTextBox.BorderStyle = System.Windows.Forms.BorderStyle.None;
             this.TranslateTextBox.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.TranslateTextBox.Font = new System.Drawing.Font("Noto Sans CJK SC Regular", 14.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.TranslateTextBox.Location = new System.Drawing.Point(3, 22);
             this.TranslateTextBox.Multiline = true;
             this.TranslateTextBox.Name = "TranslateTextBox";
@@ -585,18 +599,6 @@
             this.notifyIcon.Icon = ((System.Drawing.Icon)(resources.GetObject("notifyIcon.Icon")));
             this.notifyIcon.Text = "LabelPlus";
             this.notifyIcon.MouseDoubleClick += new System.Windows.Forms.MouseEventHandler(this.notifyIcon_MouseDoubleClick);
-            // 
-            // picView
-            // 
-            this.picView.AlwaysShowGroup = false;
-            this.picView.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.picView.EnableMakeImage = true;
-            this.picView.Location = new System.Drawing.Point(3, 3);
-            this.picView.Name = "picView";
-            this.picView.Size = new System.Drawing.Size(434, 407);
-            this.picView.TabIndex = 5;
-            this.picView.Zoom = 0.05F;
-            this.picView.PreviewKeyDown += new System.Windows.Forms.PreviewKeyDownEventHandler(this.picView_PreviewKeyDown);
             // 
             // MainFrm
             // 
