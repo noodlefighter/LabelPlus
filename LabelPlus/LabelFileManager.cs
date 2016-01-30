@@ -578,7 +578,6 @@ namespace LabelPlus
                     }
                 }
 
-                var sr = new StreamWriter(path, false, Encoding.UTF8);
                 var strToWrite = sb.ToString();
                 try
                 {
@@ -587,6 +586,7 @@ namespace LabelPlus
                 }
                 catch { }
 
+                var sr = new StreamWriter(path, false, Encoding.UTF8);
                 sr.Write(strToWrite);
                 sr.Dispose();
 
