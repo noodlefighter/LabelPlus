@@ -706,6 +706,11 @@ LabelPlusInput.prototype.process = function(opts, doc) {
     // 在PS中打开文件 
     var bg = app.open(bgFile);
     
+    // 若文档类型为索引色模式 更改为RGB模式
+    if (bg.mode == DocumentMode.INDEXEDCOLOR){
+        bg.changeMode(ChangeMode.RGB);
+    }        
+    
     var layerGroups = new Array();
     
     // 文件打开时执行一次动作"_start"
