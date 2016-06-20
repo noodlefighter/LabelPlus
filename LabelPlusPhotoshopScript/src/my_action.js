@@ -138,6 +138,11 @@ MyAction.fill = function(use, opct) {
 // 对话框涂白动作(标签数据, 图像宽度, 图像高度, 魔棒容差, 收缩保护像素)
 MyAction.lp_dialogClear = function(labelArr, imgWidht, imgHeight, tolerance, contract) {
 
+    // 参数检查
+    if (labelArr.length == 0) {
+      return;
+    }
+
     MyAction.selectNone();
     
     // 选中所有框内的空白区域
