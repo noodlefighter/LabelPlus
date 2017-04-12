@@ -23,6 +23,10 @@ const _MY_FILE_VER = "1.0";
 //-include "global_const_en.js"
 //@include "global_const_zh.js"
 
+
+// Operating System related
+var dirSeparator = $.os.search(/windows/i) === -1 ? '/': '\\';
+
 //
 // 初始设置
 //
@@ -112,7 +116,7 @@ LabelPlusInput.prototype.createPanel = function(pnl, ini) {
 		//图源、输出文件夹赋上目录
         var fl = new Folder(f.path);		
         pnl.sourceTextBox.text = fl.toUIString();
-        pnl.targetTextBox.text = fl.toUIString()+'\\output';
+        pnl.targetTextBox.text = fl.toUIString() + dirSeparator + 'output';
         
       }
       else{        
@@ -285,7 +289,7 @@ LabelPlusInput.prototype.createPanel = function(pnl, ini) {
                                           _MT_STRING_CHECKBOX_TEXTREPLACE);
   pnl.textReplaceCheckBox.onClick = function() {
     pnl.textReplaceTextBox.enabled = pnl.textReplaceCheckBox.value;
-  }    
+  };
   xx += 260;
   pnl.textReplaceTextBox = pnl.add('edittext', [xx,yy,xx+180,yy+20]);  
   pnl.textReplaceTextBox.text = "！？->!?|...->…";
@@ -293,7 +297,7 @@ LabelPlusInput.prototype.createPanel = function(pnl, ini) {
   xx = xOfs;
   yy += 20;  
   
-  
+
   // >>>>>导入项目
   yy += 10;
   pnl.add('statictext', [xx,yy,xx+120,yy+20],
@@ -661,7 +665,7 @@ LabelPlusInput.prototype.validatePanel = function(pnl, ini, tofile) {
 LabelPlusInput.prototype.process = function(opts, doc) {
   var self = this;
 
-  Stdlib.log.setFile(opts.labelFilePath+"\\LabelPlusInputer.log");//LabelPlusInputOptions.LOG_FILE);
+  Stdlib.log.setFile(opts.labelFilePath + dirSeparator + "LabelPlusInputer.log");//LabelPlusInputOptions.LOG_FILE);
   Stdlib.log("Start");
   Stdlib.log("Properties:");
   Stdlib.log(listProps(opts)); 

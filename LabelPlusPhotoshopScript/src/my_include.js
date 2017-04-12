@@ -8,7 +8,7 @@
 // License: http://noodlefighter.com/label_plus/license
 
 //
-// 外部引用
+// 锟解部锟斤拷锟斤拷
 //
 
 //@show include
